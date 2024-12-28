@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
+import { logout as performLogout } from "../app/auth/logout";
 
 type AuthState = {
   isAuthenticated: boolean;
@@ -29,13 +30,11 @@ export function useAuth() {
     checkAuth();
   }, []);
 
+  // Expose logout via the hook, so components can use it
   const logout = async () => {
-    try {
-      await SecureStore.deleteItemAsync("access_token");
-      setIsAuthenticated(false);
-    } catch (error) {
-      setError(error as Error);
-    }
+    await performLogout();
+    setIsAuthenticated(false);
   };
+
   return { isAuthenticated, isAuthLoaded, logout, error };
 }

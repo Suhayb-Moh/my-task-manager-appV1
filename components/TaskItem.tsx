@@ -1,33 +1,54 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useTasks } from "../hooks/useTasks";
 
-export interface List {
-  _id: string;
+// Define the props to match the full task object structure from the API
+export interface Task {
+  _id?: string;
   name: string;
-  user_id: string;
+  description: string;
+  due_date: string;
+  priority: number;
+  list_id: string;
+  category_id: string;
+  completed: boolean;
 }
 
-interface ListItemProps {
-  list: List;
+interface TaskItemProps {
+  task: Task;
   onDelete: () => void;
 }
 
-const ListItem: React.FC<ListItemProps> = ({ list, onDelete }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, onDelete }) => {
   const router = useRouter();
 
   const handleEditPress = () => {
     router.push({
-      pathname: "/lists/EditList",
-      params: { list: JSON.stringify(list) },
+      pathname: "/tasks/EditTasks",
+      params: { task: JSON.stringify(task) },
     });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.infoSection}>
-        <Text style={styles.name}>{list.name}</Text>
-        <Text style={styles.meta}>Created by: {list.user_id}</Text>
+        <Text style={styles.name}>{task.name}</Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {task.description}
+        </Text>
+        <Text style={styles.meta}>
+          Due: {new Date(task.due_date).toLocaleDateString()}
+        </Text>
+        <Text style={styles.priority}>Priority: {task.priority}</Text>
+        <Text
+          style={[
+            styles.status,
+            task.completed ? styles.completed : styles.pending,
+          ]}
+        >
+          {task.completed ? "Completed" : "Pending"}
+        </Text>
       </View>
 
       <View style={styles.actionSection}>
@@ -42,7 +63,7 @@ const ListItem: React.FC<ListItemProps> = ({ list, onDelete }) => {
   );
 };
 
-export default ListItem;
+export default TaskItem;
 
 const styles = StyleSheet.create({
   container: {
@@ -64,10 +85,37 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
+  description: {
+    fontSize: 14,
+    color: "#555",
+    marginVertical: 4,
+  },
   meta: {
     fontSize: 12,
     color: "#888",
+  },
+  priority: {
+    fontSize: 12,
+    color: "#555",
     marginTop: 4,
+  },
+  status: {
+    marginTop: 8,
+    fontSize: 12,
+    fontWeight: "bold",
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 4,
+    textAlign: "center",
+    alignSelf: "flex-start",
+  },
+  completed: {
+    backgroundColor: "#d1e7dd",
+    color: "#0f5132",
+  },
+  pending: {
+    backgroundColor: "#f8d7da",
+    color: "#842029",
   },
   actionSection: {
     flexDirection: "row",

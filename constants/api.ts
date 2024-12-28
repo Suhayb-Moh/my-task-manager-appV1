@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { useAuth } from "../hooks/useAuth";
+import { logout } from "../app/auth/logout";
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -34,8 +34,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // handle unauthorized requests
-      const { logout } = useAuth();
+      // if the token is invalid or expired, log the user out
       logout();
       // clear the access token and navigate to the login screen
     } else if (error.response?.status === 404) {
@@ -99,5 +98,21 @@ export async function apiDelete<T>(endpoint: string): Promise<T | null> {
     return null;
   }
 }
+
+// Fetch tasks by list ID
+export async function fetchTasksByListId(
+  listId: string
+): Promise<any[] | null> {
+  return await apiGet(`/tasks/list/${listId}`);
+}
+
+// Fetch tasks by category ID
+export async function fetchTasksByCategoryId(
+  categoryId: string
+): Promise<any[] | null> {
+  return await apiGet(`/tasks/category/${categoryId}`);
+}
+
+// fetch all lists endpoit
 
 export default api;

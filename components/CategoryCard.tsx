@@ -2,32 +2,30 @@ import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
-export interface List {
+export interface Category {
   _id: string;
   name: string;
-  user_id: string;
 }
 
-interface ListItemProps {
-  list: List;
+interface CategoryItemProps {
+  category: Category;
   onDelete: () => void;
 }
 
-const ListItem: React.FC<ListItemProps> = ({ list, onDelete }) => {
+const CategoryItem: React.FC<CategoryItemProps> = ({ category, onDelete }) => {
   const router = useRouter();
 
   const handleEditPress = () => {
     router.push({
-      pathname: "/lists/EditList",
-      params: { list: JSON.stringify(list) },
+      pathname: "/categories/EditCategory",
+      params: { category: JSON.stringify(category) },
     });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.infoSection}>
-        <Text style={styles.name}>{list.name}</Text>
-        <Text style={styles.meta}>Created by: {list.user_id}</Text>
+        <Text style={styles.name}>{category.name}</Text>
       </View>
 
       <View style={styles.actionSection}>
@@ -42,7 +40,7 @@ const ListItem: React.FC<ListItemProps> = ({ list, onDelete }) => {
   );
 };
 
-export default ListItem;
+export default CategoryItem;
 
 const styles = StyleSheet.create({
   container: {
@@ -63,11 +61,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
-  },
-  meta: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 4,
   },
   actionSection: {
     flexDirection: "row",
