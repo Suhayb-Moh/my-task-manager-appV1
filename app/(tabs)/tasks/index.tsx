@@ -1,11 +1,13 @@
 // screens/tasks/TasksScreen.tsx
 import React, { useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, SafeAreaView } from "react-native";
 import TaskItem, { Task } from "../../../components/TaskItem";
 import { useTasks } from "../../../hooks/useTasks";
+import { useTheme } from "../../../hooks/theme-context";
 
 const TasksScreen = () => {
   const { tasks, loading, error, reloadTasks, deleteTask } = useTasks();
+  const { theme } = useTheme();
 
   useEffect(() => {
     // Load tasks when component mounts
@@ -21,28 +23,46 @@ const TasksScreen = () => {
     }
   };
 
-  if (loading) return <Text>Loading Tasks...</Text>;
-  if (error) return <Text>Error: {error}</Text>;
+  if (loading)
+    return (
+      <Text style={[styles.loadingText, { color: theme.textColor }]}>
+        Loading Tasks...
+      </Text>
+    );
+  if (error)
+    return (
+      <Text style={[styles.errorText, { color: theme.textColor }]}>
+        Error: {error}
+      </Text>
+    );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Your Tasks</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+      <View
+        style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+      >
+        <Text style={[styles.title, { color: theme.textColor }]}>
+          Your Tasks
+        </Text>
 
-      {tasks.length === 0 ? (
-        <Text style={styles.noTasksText}>No tasks available.</Text>
-      ) : (
-        <FlatList
-          data={tasks}
-          keyExtractor={(item: Task) => item._id || ""}
-          renderItem={({ item }) => (
-            <TaskItem
-              task={item}
-              onDelete={() => item._id && handleTaskDeletion(item._id)}
-            />
-          )}
-        />
-      )}
-    </View>
+        {tasks.length === 0 ? (
+          <Text style={[styles.noTasksText, { color: theme.textColor }]}>
+            No tasks available.
+          </Text>
+        ) : (
+          <FlatList
+            data={tasks}
+            keyExtractor={(item: Task) => item._id || ""}
+            renderItem={({ item }) => (
+              <TaskItem
+                task={item}
+                onDelete={() => item._id && handleTaskDeletion(item._id)}
+              />
+            )}
+          />
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -59,6 +79,18 @@ const styles = StyleSheet.create({
   noTasksText: {
     fontSize: 16,
     color: "#666",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#f5222d",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#494949",
     textAlign: "center",
     marginTop: 20,
   },

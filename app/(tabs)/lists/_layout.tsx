@@ -6,6 +6,7 @@ const _layout = () => {
   return (
     <Stack
       screenOptions={{
+        headerShown: false,
         headerTitle: "Lists",
       }}
     />

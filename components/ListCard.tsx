@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useTheme } from "../hooks/theme-context";
 
 export interface List {
   _id: string;
@@ -15,6 +16,7 @@ interface ListItemProps {
 
 const ListItem: React.FC<ListItemProps> = ({ list, onDelete }) => {
   const router = useRouter();
+  const { theme } = useTheme();
 
   const handleEditPress = () => {
     router.push({
@@ -24,18 +26,38 @@ const ListItem: React.FC<ListItemProps> = ({ list, onDelete }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.inputBackgroundColor,
+          borderColor: theme.inputBorderColor,
+        },
+      ]}
+    >
       <View style={styles.infoSection}>
-        <Text style={styles.name}>{list.name}</Text>
-        <Text style={styles.meta}>Created by: {list.user_id}</Text>
+        <Text style={[styles.name, { color: theme.textColor }]}>
+          {list.name}
+        </Text>
+        <Text style={[styles.meta, { color: theme.textColor }]}>
+          Created by: {list.user_id}
+        </Text>
       </View>
 
       <View style={styles.actionSection}>
-        <Pressable style={styles.editButton} onPress={handleEditPress}>
-          <Text style={styles.buttonText}>Edit</Text>
+        <Pressable
+          style={[styles.editButton, { backgroundColor: theme.buttonColor }]}
+          onPress={handleEditPress}
+        >
+          <Text style={[styles.buttonText, { color: theme.buttonTextColor }]}>
+            Edit
+          </Text>
         </Pressable>
-        <Pressable style={styles.deleteButton} onPress={onDelete}>
-          <Text style={styles.buttonText}>Delete</Text>
+        <Pressable
+          style={[styles.deleteButton, { backgroundColor: "#f8d7da" }]} // Use a fixed delete color
+          onPress={onDelete}
+        >
+          <Text style={[styles.buttonText, { color: "#000" }]}>Delete</Text>
         </Pressable>
       </View>
     </View>

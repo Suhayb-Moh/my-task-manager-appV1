@@ -24,8 +24,7 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
-        headerTitle: "Tasks",
+        headerShown: false,
         headerRight: () =>
           !isCreateTaskVisible ? (
             <Ionicons

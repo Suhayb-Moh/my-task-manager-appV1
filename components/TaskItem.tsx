@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, SafeAreaView } from "react-native";
 import { useRouter } from "expo-router";
-import { useTasks } from "../hooks/useTasks";
+import { useTheme } from "../hooks/theme-context";
 
 // Define the props to match the full task object structure from the API
 export interface Task {
@@ -22,6 +22,7 @@ interface TaskItemProps {
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, onDelete }) => {
   const router = useRouter();
+  const { theme } = useTheme();
 
   const handleEditPress = () => {
     router.push({
@@ -31,35 +32,61 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onDelete }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.infoSection}>
-        <Text style={styles.name}>{task.name}</Text>
-        <Text style={styles.description} numberOfLines={2}>
-          {task.description}
-        </Text>
-        <Text style={styles.meta}>
-          Due: {new Date(task.due_date).toLocaleDateString()}
-        </Text>
-        <Text style={styles.priority}>Priority: {task.priority}</Text>
-        <Text
-          style={[
-            styles.status,
-            task.completed ? styles.completed : styles.pending,
-          ]}
-        >
-          {task.completed ? "Completed" : "Pending"}
-        </Text>
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: theme.inputBackgroundColor,
+            borderColor: theme.inputBorderColor,
+          },
+        ]}
+      >
+        <View style={styles.infoSection}>
+          <Text style={[styles.name, { color: theme.textColor }]}>
+            {task.name}
+          </Text>
+          <Text
+            style={[styles.description, { color: theme.textColor }]}
+            numberOfLines={2}
+          >
+            {task.description}
+          </Text>
+          <Text style={[styles.meta, { color: theme.textColor }]}>
+            Due: {new Date(task.due_date).toLocaleDateString()}
+          </Text>
+          <Text style={[styles.priority, { color: theme.textColor }]}>
+            Priority: {task.priority}
+          </Text>
+          <Text
+            style={[
+              styles.status,
+              task.completed ? styles.completed : styles.pending,
+              { color: "#000" },
+            ]}
+          >
+            {task.completed ? "Completed" : "Pending"}
+          </Text>
+        </View>
 
-      <View style={styles.actionSection}>
-        <Pressable style={styles.editButton} onPress={handleEditPress}>
-          <Text style={styles.buttonText}>Edit</Text>
-        </Pressable>
-        <Pressable style={styles.deleteButton} onPress={onDelete}>
-          <Text style={styles.buttonText}>Delete</Text>
-        </Pressable>
+        <View style={styles.actionSection}>
+          <Pressable
+            style={[styles.editButton, { backgroundColor: theme.buttonColor }]}
+            onPress={handleEditPress}
+          >
+            <Text style={[styles.buttonText, { color: theme.buttonTextColor }]}>
+              Edit
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[styles.deleteButton, { backgroundColor: "#f8d7da" }]}
+            onPress={onDelete}
+          >
+            <Text style={[styles.buttonText, { color: "#000" }]}>Delete</Text>
+          </Pressable>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -111,24 +138,20 @@ const styles = StyleSheet.create({
   },
   completed: {
     backgroundColor: "#d1e7dd",
-    color: "#0f5132",
   },
   pending: {
     backgroundColor: "#f8d7da",
-    color: "#842029",
   },
   actionSection: {
     flexDirection: "row",
     alignItems: "center",
   },
   editButton: {
-    backgroundColor: "#e2eafc",
     padding: 8,
     borderRadius: 4,
     marginRight: 8,
   },
   deleteButton: {
-    backgroundColor: "#f8d7da",
     padding: 8,
     borderRadius: 4,
   },
@@ -136,5 +159,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
     color: "#333",
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
   },
 });

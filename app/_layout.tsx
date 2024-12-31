@@ -1,7 +1,11 @@
+import React from "react";
 import { router, Slot, Stack, useNavigationContainerRef } from "expo-router";
+import { StatusBar } from "react-native";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useFonts } from "expo-font";
+import { ThemeProvider, useTheme } from "../hooks/theme-context";
+import { darkTheme } from "../styles/theme";
 
 export default function RootLayoutNav() {
   const [isNavigationReady, setNavigationReady] = useState(false);
@@ -47,5 +51,26 @@ export default function RootLayoutNav() {
       }
     }
   }, [isNavigationReady, isAuthLoaded, isAuthenticated]);
-  return <Slot />;
+
+  return (
+    <>
+      <ThemeProvider>
+        <AppWithTheme />
+      </ThemeProvider>
+    </>
+  );
 }
+
+const AppWithTheme = () => {
+  const { theme } = useTheme();
+
+  return (
+    <>
+      <StatusBar
+        barStyle={theme === darkTheme ? "light-content" : "dark-content"}
+        backgroundColor={theme.backgroundColor}
+      />
+      <Slot />
+    </>
+  );
+};
